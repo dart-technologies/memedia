@@ -6,6 +6,10 @@
 
 Flutter web + GenUI/A2UI v0.9 + Node/TypeScript, deployed together on Vercel. Server-side YouTube discovery and `gpt-6-astra` metadata screening refresh channels while preserving the current selection. See [release verification](docs/RELEASE-V6.md) and the [60-second recording script](docs/RECORDING-SCRIPT-60S.md).
 
+## Timed demo recording
+
+Use the [recording presenter](https://memedia-pi.vercel.app/recording.html) to drive the six timed walkthrough beats in a separate clean demo tab. Includes narration, warm-up, pause/resume, manual advance and optional local WebM capture. See [harness instructions](docs/RECORDING-HARNESS.md).
+
 ## Start here
 
 Requirements: Flutter 3.47.3 / Dart 3.13.3, Node 24.18.1, Chrome. Flutter is installed at `/Users/dartbot/dev/flutter` on the setup Mac. No full Xcode installation is needed for this web target.
@@ -83,7 +87,7 @@ The surrounding topics pool 24 monitored Google Trends country feeds without cou
 
 Autonomous scouting across every platform, full factual verification, six-role scheduling, asynchronous Astra steering and authentic recording replay remain unimplemented. YouTube inline autoplay and Next are implemented; platform restrictions can still require a tap or source opening. Time rings/filtering distinguish publication from observation; they do not reconstruct complete historical editorial lineage. The live Vercel demo uses a temporary per-instance cache, a recorded seed fallback and bounded scan execution. Durable shared editorial storage remains future work.
 
-Repository destination: [dart-technologies/memedia](https://github.com/dart-technologies/memedia). The release baseline is committed locally; GitHub publication is a separate step. See [INIT-BASELINE.md](docs/INIT-BASELINE.md) for safe installation and the initial commit checklist.
+Repository destination: [dart-technologies/memedia](https://github.com/dart-technologies/memedia). The release baseline and recording harness are published on `main`. See [INIT-BASELINE.md](docs/INIT-BASELINE.md) for safe installation and the initial commit checklist.
 
 ## Documentation
 

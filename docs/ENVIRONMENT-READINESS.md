@@ -1,6 +1,10 @@
 # MeMedia — environment readiness
 
-## Current v6 production verification
+## Recording harness update
+
+The presenter at `/recording.html` controls a clean `?demo=1` window, advancing the six ten-second script beats with a final showcase return at 56 seconds. Includes warm-up, pause/resume, manual jumps, restart and optional local WebM capture. 21 backend/timer tests and six Flutter tests pass; analysis is clean and the final release web compile passed in 38.4 seconds. Chrome completed the full 60-second rehearsal, including explanation routes, live cache warm-up and inline playback. Native tab-capture permission/download remains user-driven. See [RECORDING-HARNESS.md](RECORDING-HARNESS.md).
+
+## Previous v6 production verification
 
 [MeMedia is live](https://memedia-pi.vercel.app/) on Vercel, deployment `dpl_2a8AjXuqSmwwDavph6qZWWb4xve5`. Flutter and the Node API share one deployment. iPhone Duo is centered, with unfolding topics around it and one primary observation flag each.
 

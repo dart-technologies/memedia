@@ -165,6 +165,34 @@ void main() {
     expect(find.text('HANDS-ON PERSPECTIVES'), findsOneWidget);
     expect(identical(state, tester.state(find.byType(StellarSlate))), true);
     expect(tester.takeException(), null);
+    void demoCue(int sequence, String action) => feed({
+      'version': 'v0.9',
+      'updateDataModel': {
+        'surfaceId': 'stellar-slate',
+        'path': '/scene',
+        'value': {
+          ...scene,
+          'selectedChannelId': action == 'freshness' ? 'hands-on' : null,
+          'demoCue': {'sequence': sequence, 'action': action},
+        },
+      },
+    });
+    demoCue(1, 'relationships');
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.text('Continue'), findsOneWidget);
+    expect(find.text('Reactions & memes'), findsOneWidget);
+    demoCue(2, 'freshness');
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.text('Curation & freshness'), findsOneWidget);
+    expect(find.text('Reactions & memes'), findsNothing);
+    demoCue(3, 'closing');
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.text('Continue'), findsNothing);
+    expect(identical(state, tester.state(find.byType(StellarSlate))), true);
+    expect(tester.takeException(), null);
     await tester.pumpWidget(const SizedBox());
     actions.cancel();
     sub.cancel();

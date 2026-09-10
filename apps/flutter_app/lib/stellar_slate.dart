@@ -267,9 +267,67 @@ class _StellarSlateState extends State<StellarSlate>
         if (value is! Map) {
           return const Center(child: CircularProgressIndicator());
         }
+        handleDemoCue(value);
         return buildSky(value);
       },
     );
+  }
+
+  int? demoSequence;
+  DialogRoute<void>? demoDialog;
+  void handleDemoCue(Map scene) {
+    final cue = scene['demoCue'];
+    if (cue is! Map || cue['sequence'] == demoSequence) return;
+    demoSequence = cue['sequence'] as int;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || (scene['demoCue'] as Map)['sequence'] != demoSequence) {
+        return;
+      }
+      final navigator = Navigator.of(context);
+      if (demoDialog?.isActive == true) navigator.removeRoute(demoDialog!);
+      demoDialog = null;
+      final action = cue['action'];
+      setState(() {
+        horizon = 1;
+        observed = false;
+        platform = 'All';
+        english = true;
+        topOnly = true;
+        if (action == 'channel' || action == 'discovery') playingId = null;
+      });
+      if (rail.hasClients) rail.jumpTo(0);
+      Map? explanation;
+      if (action == 'relationships') {
+        explanation = (scene['clusterGroups'] as List).cast<Map>().firstWhere(
+          (g) => (g['label'] as String).toLowerCase().contains('reactions'),
+        );
+      }
+      if (action == 'relationships' || action == 'freshness') {
+        final channel = (scene['channels'] as List).cast<Map>().firstWhere(
+          (c) => c['id'] == 'hands-on',
+        );
+        demoDialog = DialogRoute<void>(
+          context: context,
+          builder: (context) => AlertDialog(
+            backgroundColor: panel,
+            title: Text(
+              explanation?['label'] as String? ?? 'Curation & freshness',
+            ),
+            content: Text(
+              explanation?['reason'] as String? ??
+                  '${channel['whyThisChannel']}\n\nOpening a channel scans YouTube and screens metadata with Astra. Fresh cache is reused. Views and likes are observed counts; publication age and scan time stay separate. Errors retain current media.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Continue'),
+              ),
+            ],
+          ),
+        );
+        navigator.push(demoDialog!);
+      }
+    });
   }
 
   Widget buildSky(Map scene) {

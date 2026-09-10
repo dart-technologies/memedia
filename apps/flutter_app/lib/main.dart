@@ -7,6 +7,7 @@ import 'package:genui/genui.dart';
 import 'package:http/http.dart' as http;
 
 import 'browser_prefs.dart';
+import 'demo_bridge.dart';
 import 'stellar_slate.dart';
 
 void main() => runApp(const MeMediaApp());
@@ -106,6 +107,7 @@ class _MeMediaAppState extends State<MeMediaApp> {
         },
       });
       update();
+      registerDemo(runDemoCue);
       if (widget.initialScene == null) unawaited(connect());
     } catch (_) {
       if (mounted) {
@@ -136,9 +138,28 @@ class _MeMediaAppState extends State<MeMediaApp> {
     }
   }
 
+  int demoSequence = 0;
+  void runDemoCue(String action) {
+    if (!mounted || scene.isEmpty) return;
+    if (action == 'warm') {
+      unawaited(refresh('hands-on'));
+      return;
+    }
+    const channelCues = {'channel', 'freshness', 'timeline'};
+    scene = {
+      ...scene,
+      'selectedTopicId': action == 'discovery' ? null : 'iphone-duo',
+      'selectedChannelId': channelCues.contains(action) ? 'hands-on' : null,
+      'demoCue': {'sequence': ++demoSequence, 'action': action},
+    };
+    update();
+    if (action == 'channel') unawaited(refresh('hands-on'));
+  }
+
   Future<void> refresh(String key) async {
     if (pending.contains(key)) return;
     pending.add(key);
+    demoStatus('$key: scanning');
     scene = {
       ...scene,
       'scanStates': {...scene['scanStates'] as Map, key: 'scanning'},
@@ -190,6 +211,7 @@ class _MeMediaAppState extends State<MeMediaApp> {
       }
     } finally {
       pending.remove(key);
+      demoStatus('$key: ${(scene['scanStates'] as Map)[key]}');
       if (mounted) update();
     }
   }

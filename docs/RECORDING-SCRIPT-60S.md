@@ -1,5 +1,7 @@
 # MeMedia — 60-second recording script
 
+For automatic screen advancement, use [the recording harness](RECORDING-HARNESS.md).
+
 Target: about 130 spoken words at a relaxed demo pace. Record in Chrome, landscape. Keep playback muted beneath narration. Warm First looks once before recording, return to Discover, and keep the publication slider on NOW. Live research may take longer than a segment; keep the cached media visible while scanning. Do not imply that a complete scan finished until its status confirms it.
 
 | Time | Screen action | Voiceover |
