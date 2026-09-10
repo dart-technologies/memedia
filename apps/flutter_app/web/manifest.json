@@ -1,0 +1,19 @@
+{
+  "name": "MeMedia",
+  "short_name": "MeMedia",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#080c16",
+  "theme_color": "#080c16",
+  "description": "Unfolding moments. Connecting reactions.",
+  "orientation": "landscape",
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

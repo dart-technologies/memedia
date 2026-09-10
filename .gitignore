@@ -1,0 +1,20 @@
+.env
+.env.*
+!.env.example
+node_modules/
+.dart_tool/
+.flutter-plugins-dependencies
+build/
+coverage/
+data/*.jsonl
+data/*.json
+!data/*.example.json
+.DS_Store
+*.log
+.vercel/
+preview-package/
+.vercel
+.env*
+
+# Keep blank credential templates available to collaborators.
+!.env.example

@@ -1,0 +1,14 @@
+{
+  "name": "memedia-backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {"node": ">=24.18.1 <25"},
+  "scripts": {
+    "start": "node --env-file-if-exists=.env src/server.ts",
+    "dev": "node --env-file-if-exists=.env --watch src/server.ts",
+    "test": "node --test test/*.test.ts",
+    "check:env": "node --env-file-if-exists=.env src/check-env.ts",
+    "check:apis": "node --env-file-if-exists=.env src/check-apis.ts"
+  }
+}

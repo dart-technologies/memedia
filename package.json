@@ -1,0 +1,25 @@
+{
+  "name": "memedia",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=24.18.1 <25"
+  },
+  "scripts": {
+    "init:env": "node scripts/init-env.mjs",
+    "check:env": "npm --prefix backend run check:env",
+    "check:apis": "npm --prefix backend run check:apis",
+    "test": "npm --prefix backend test",
+    "start": "npm --prefix backend start",
+    "prepare:explorer": "node scripts/prepare-explorer.mjs",
+    "package:preview": "node scripts/package-preview.mjs",
+    "prepare:galaxy": "node scripts/prepare-galaxy.mjs",
+    "refresh:curators": "node --env-file=backend/.env scripts/refresh-curators.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "24.13.4",
+    "typescript": "5.9.3"
+  },
+  "type": "module"
+}

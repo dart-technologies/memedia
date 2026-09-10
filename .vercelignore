@@ -1,0 +1,9 @@
+**/.env
+**/.env.*
+backend/test/
+data/
+.git/
+node_modules/
+apps/flutter_app/.dart_tool/
+apps/flutter_app/build/flutter_assets/
+docs/

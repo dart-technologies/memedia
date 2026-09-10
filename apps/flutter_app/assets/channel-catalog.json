@@ -1,0 +1,320 @@
+{
+  "schemaVersion": 1,
+  "missionId": "iphone-duo-2026-09-09",
+  "revision": 1,
+  "createdAt": "2026-09-10T16:34:42.729143+00:00",
+  "status": "RESEARCH_PROPOSAL_NOT_IMPORTED",
+  "context": {
+    "city": "New York City",
+    "country": "US",
+    "preferredLanguage": "en",
+    "intent": "business technology",
+    "timeBudgetSeconds": 480,
+    "attention": "low"
+  },
+  "eventOrigin": {
+    "date": "2026-09-09",
+    "timestamp": null,
+    "precision": "day",
+    "sourceId": "w01"
+  },
+  "channels": [
+    {
+      "id": "launch",
+      "label": "The launch",
+      "editorialQuestion": "What did Apple actually announce?",
+      "status": "DRAFT_RESEARCH_CHANNEL",
+      "seedArtifactIds": [
+        "w01",
+        "yt-FUfGcZ092b0",
+        "yt-bxSGfpoFP30",
+        "yt-ZlMvbjknrIg"
+      ],
+      "whyThisChannel": "Primary context anchors every response.",
+      "relatedChannelIds": [
+        "hands-on",
+        "value",
+        "software"
+      ],
+      "requiredBeforeProgramming": "Verify video publisher identity and relevant content; retain manufacturer attribution.",
+      "approvedQueueArtifactIds": [],
+      "aggregateViews": null,
+      "aggregateLikes": null
+    },
+    {
+      "id": "hands-on",
+      "label": "First impressions",
+      "editorialQuestion": "How does it feel to use?",
+      "status": "DRAFT_RESEARCH_CHANNEL",
+      "seedArtifactIds": [
+        "w07",
+        "w08",
+        "w26",
+        "yt-6AkGhTBtR4o",
+        "yt-qypQmnlFjNk",
+        "yt-2qNfOa5AuVU",
+        "yt-VNzl-q0EGfg"
+      ],
+      "whyThisChannel": "Early handling gives a concrete visual contrast to launch claims.",
+      "relatedChannelIds": [
+        "ergonomics",
+        "repair",
+        "competition"
+      ],
+      "requiredBeforeProgramming": "Review full media, sponsorship disclosure, and chapter relevance; distinguish first impressions from long-term tests.",
+      "approvedQueueArtifactIds": [],
+      "aggregateViews": null,
+      "aggregateLikes": null
+    },
+    {
+      "id": "competition",
+      "label": "The competitive response",
+      "editorialQuestion": "What did rivals say, and how do the devices compare?",
+      "status": "DRAFT_RESEARCH_CHANNEL",
+      "seedArtifactIds": [
+        "w02",
+        "w17",
+        "w23",
+        "yt-Zxi1AAPZ0xc",
+        "yt--0jA3J-baTI",
+        "yt-RsSHIegH17M"
+      ],
+      "whyThisChannel": "Separates brand reaction from independent comparison.",
+      "relatedChannelIds": [
+        "brand-banter",
+        "hands-on",
+        "value"
+      ],
+      "requiredBeforeProgramming": "Original Samsung posts require verification; reporting may be labeled as reporting. Motorola remains a lead.",
+      "approvedQueueArtifactIds": [],
+      "aggregateViews": null,
+      "aggregateLikes": null
+    },
+    {
+      "id": "brand-banter",
+      "label": "Brand banter",
+      "editorialQuestion": "How did other brands join the conversation?",
+      "status": "DRAFT_RESEARCH_CHANNEL",
+      "seedArtifactIds": [
+        "w02",
+        "yt-JDz9WgZC9B4",
+        "yt-ZIosWA0b-vs",
+        "x-2097734978746372358",
+        "x-2097748226174582784"
+      ],
+      "whyThisChannel": "Duolingo creates a cultural branch beyond phone competitors.",
+      "relatedChannelIds": [
+        "competition",
+        "visual-memes"
+      ],
+      "requiredBeforeProgramming": "Check original post text and date; do not treat repeated reports as independent confirmation.",
+      "approvedQueueArtifactIds": [],
+      "aggregateViews": null,
+      "aggregateLikes": null
+    },
+    {
+      "id": "visual-memes",
+      "label": "The image becomes a meme",
+      "editorialQuestion": "Which visual jokes are actually documented?",
+      "status": "DRAFT_RESEARCH_CHANNEL",
+      "seedArtifactIds": [
+        "w03",
+        "w04",
+        "x-2097777885893292337",
+        "yt-rc4ubS4KNZc",
+        "yt-_AXxnQjz0Sg"
+      ],
+      "whyThisChannel": "Connects documented reactions to imagery without endorsing manipulation allegations.",
+      "relatedChannelIds": [
+        "ergonomics",
+        "brand-banter"
+      ],
+      "requiredBeforeProgramming": "Inspect originals and actual audiovisual content. Generic meme video titles do not prove the long-fingers motif.",
+      "approvedQueueArtifactIds": [],
+      "aggregateViews": null,
+      "aggregateLikes": null
+    },
+    {
+      "id": "value",
+      "label": "Price and value",
+      "editorialQuestion": "What does the purchase decision look like?",
+      "status": "DRAFT_RESEARCH_CHANNEL",
+      "seedArtifactIds": [
+        "w01",
+        "w14",
+        "w15",
+        "w19",
+        "w27",
+        "w28",
+        "yt-8Vh_zxj64-c",
+        "yt-ZzGzNdppGS8",
+        "yt-W4bh9KKlbQI"
+      ],
+      "whyThisChannel": "Connects US pricing and timing to buyer tradeoffs; regional pricing stays explicit.",
+      "relatedChannelIds": [
+        "business",
+        "community",
+        "competition"
+      ],
+      "requiredBeforeProgramming": "Verify region, currency, conditions and dates. Do not infer NYC inventory.",
+      "approvedQueueArtifactIds": [],
+      "aggregateViews": null,
+      "aggregateLikes": null
+    },
+    {
+      "id": "business",
+      "label": "The business story",
+      "editorialQuestion": "What changes for the market and ecosystem?",
+      "status": "DRAFT_RESEARCH_CHANNEL",
+      "seedArtifactIds": [
+        "w05",
+        "w06",
+        "w25",
+        "yt-2lkx5NQbXrE",
+        "yt-k3MOn-BBGH0",
+        "yt-ZzGzNdppGS8"
+      ],
+      "whyThisChannel": "A separate lens for the business-oriented passenger.",
+      "relatedChannelIds": [
+        "value",
+        "competition",
+        "software"
+      ],
+      "requiredBeforeProgramming": "Verify publisher identity, dates, and facts; agency syndication counts as one evidence family.",
+      "approvedQueueArtifactIds": [],
+      "aggregateViews": null,
+      "aggregateLikes": null
+    },
+    {
+      "id": "repair",
+      "label": "Durability and repair",
+      "editorialQuestion": "What is known, and what is still untested?",
+      "status": "DRAFT_RESEARCH_CHANNEL",
+      "seedArtifactIds": [
+        "w01",
+        "w09",
+        "w16",
+        "w17"
+      ],
+      "whyThisChannel": "Makes the gap between design claims and independent testing visible.",
+      "relatedChannelIds": [
+        "hands-on",
+        "value",
+        "ergonomics"
+      ],
+      "requiredBeforeProgramming": "No completed Duo teardown or long-term test was established. Label expert concerns as prospective.",
+      "approvedQueueArtifactIds": [],
+      "aggregateViews": null,
+      "aggregateLikes": null
+    },
+    {
+      "id": "software",
+      "label": "Apps and productivity",
+      "editorialQuestion": "How does software adapt to the new shape?",
+      "status": "DRAFT_RESEARCH_CHANNEL",
+      "seedArtifactIds": [
+        "w10",
+        "w11",
+        "w12",
+        "w20",
+        "yt-qsd-VwqmZvI",
+        "yt-2y6xvya0b8M"
+      ],
+      "whyThisChannel": "Provides a practical rabbit hole for developers and productivity intent.",
+      "relatedChannelIds": [
+        "business",
+        "ergonomics",
+        "hands-on"
+      ],
+      "requiredBeforeProgramming": "Verify official resource version and relevant chapters; full developer videos exceed eight minutes.",
+      "approvedQueueArtifactIds": [],
+      "aggregateViews": null,
+      "aggregateLikes": null
+    },
+    {
+      "id": "ergonomics",
+      "label": "Hands, reach and accessibility",
+      "editorialQuestion": "Who can comfortably use this form?",
+      "status": "DRAFT_RESEARCH_CHANNEL",
+      "seedArtifactIds": [
+        "w21",
+        "w17",
+        "w04",
+        "w07"
+      ],
+      "whyThisChannel": "A practical branch distinct from visual jokes and photo-edit allegations.",
+      "relatedChannelIds": [
+        "visual-memes",
+        "software",
+        "hands-on"
+      ],
+      "requiredBeforeProgramming": "Community concerns are not verified defects; seek hands-on accessibility evidence.",
+      "approvedQueueArtifactIds": [],
+      "aggregateViews": null,
+      "aggregateLikes": null
+    },
+    {
+      "id": "community",
+      "label": "Buy, wait or skip",
+      "editorialQuestion": "What are individual buyers debating?",
+      "status": "DRAFT_RESEARCH_CHANNEL",
+      "seedArtifactIds": [
+        "w04",
+        "w18",
+        "w19",
+        "yt-W4bh9KKlbQI",
+        "yt-sdlnu3iyJ44"
+      ],
+      "whyThisChannel": "Adds situated perspectives without pretending they are a representative poll.",
+      "relatedChannelIds": [
+        "value",
+        "competition",
+        "repair"
+      ],
+      "requiredBeforeProgramming": "Deduplicate quotes and disclose anecdotal scope. No population sentiment claim.",
+      "approvedQueueArtifactIds": [],
+      "aggregateViews": null,
+      "aggregateLikes": null
+    },
+    {
+      "id": "podcasts",
+      "label": "Go deeper",
+      "editorialQuestion": "Which longer discussions merit a follow-up?",
+      "status": "DRAFT_RESEARCH_CHANNEL",
+      "seedArtifactIds": [
+        "w13",
+        "yt-ci1RAWKbtLw",
+        "yt-MmPoa2_C_rU",
+        "yt-O6kJgoUk-RY"
+      ],
+      "whyThisChannel": "Long-form continuation is useful after a short ride.",
+      "relatedChannelIds": [
+        "business",
+        "hands-on",
+        "software"
+      ],
+      "requiredBeforeProgramming": "Review chapters and full-source links; do not enqueue long episodes within an eight-minute budget.",
+      "approvedQueueArtifactIds": [],
+      "aggregateViews": null,
+      "aggregateLikes": null
+    }
+  ],
+  "crossCuttingFacets": [
+    "actor",
+    "relationship",
+    "content form",
+    "motif",
+    "region",
+    "language",
+    "intent",
+    "publication time",
+    "observation time"
+  ],
+  "explicitGaps": [
+    "NYC store inventory",
+    "Original long-fingers creator",
+    "Verified Motorola response",
+    "Independent long-term testing",
+    "Authenticated TikTok/Instagram discovery"
+  ]
+}

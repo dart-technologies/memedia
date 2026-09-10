@@ -1,0 +1,51 @@
+{
+  "version": 2,
+  "framework": null,
+  "buildCommand": "npm run typecheck",
+  "installCommand": "npm install --ignore-scripts --no-audit --no-fund",
+  "outputDirectory": "apps/flutter_app/build/web",
+  "functions": {
+    "api/index.ts": {
+      "maxDuration": 120,
+      "includeFiles": "apps/flutter_app/assets/explorer.json"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/explorer/refresh",
+      "destination": "/api/index?route=refresh"
+    },
+    {
+      "source": "/api/explorer",
+      "destination": "/api/index?route=explorer"
+    },
+    {
+      "source": "/api/health",
+      "destination": "/api/index?route=health"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
+      ]
+    },
+    {
+      "source": "/assets/assets/explorer.json",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        }
+      ]
+    }
+  ]
+}
