@@ -1,10 +1,10 @@
 # HTTP, domain, and A2UI contracts
 
-Backend base: `http://127.0.0.1:8787`, configurable with `PORT`.
+Local backend base: `http://127.0.0.1:8787`, configurable with `PORT`. Production uses `https://memedia-pi.vercel.app`. Only health, explorer reads and explorer refresh (also `/api/refresh`) are exposed by the hosted adapter; mission state, surface and action endpoints below remain local.
 
 | Method/path | Result |
 |---|---|
-| `GET /api/explorer` | Current regional world snapshot and cached channel entries; no secrets |
+| `GET /api/explorer` | Current globally pooled world snapshot and cached channel entries; no secrets |
 | `POST /api/explorer/refresh` | JSON `{ "key": "visual-memes" }`; allowlisted channel, current topic ID or `world` |
 | `GET /api/health` | Mode/model, key presence flags, selected key slot, busy flag, revision; no credentials |
 | `GET /api/state` | Current accepted mission snapshot |
@@ -18,7 +18,7 @@ Example action:
 {"version":"v0.9","action":{"surfaceId":"stellar-slate","name":"discover","sourceComponentId":"root","context":{"revision":0,"query":"Apple iPhone Duo"}}}
 ```
 
-Actions: `discover` (optional query, 2–160 characters); `reprogram`; `passenger` (`general` or `business`). Every mutation requires the current `context.revision`. UI events also include timestamps. POST requests require JSON; browser origins must match the local server. Maximum body size is 16 KiB.
+Legacy mission actions: `discover` (optional query, 2–160 characters); `reprogram`; `passenger` (`general` or `business`). Every mission mutation requires the current `context.revision`. UI events also include timestamps. POST requests require JSON; browser origins must match the local server. Maximum mission-action body size is 16 KiB. Explorer refresh uses its separate cache/revision contract below.
 
 A2UI scene update:
 

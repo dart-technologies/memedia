@@ -2,9 +2,13 @@
 
 **Unfolding moments. Connecting reactions.**
 
+[![Watch MeMedia powered by Astra2UI on YouTube](https://i.ytimg.com/vi/6qgCYbcgvGY/hqdefault.jpg)](https://youtu.be/6qgCYbcgvGY)
+
+**[Watch the demo](https://youtu.be/6qgCYbcgvGY) · [Try MeMedia](https://memedia-pi.vercel.app/) · [Submission writeup and judging scorecard](docs/SUBMISSION.md)**
+
 [Open the live demo](https://memedia-pi.vercel.app/) in Chrome. iPhone Duo anchors the centered showcase, surrounded by globally pooled topics with one primary observation flag each. Twelve thumbnail-led channels cluster related perspectives, explain their connections and play YouTube inline.
 
-Flutter web + GenUI/A2UI v0.9 + Node/TypeScript, deployed together on Vercel. Server-side YouTube discovery and `gpt-6-astra` metadata screening refresh channels while preserving the current selection. Source thumbnails preserve their full framing and YouTube requests playback with sound. Headlines wrap fully; media plays in the selected card, with compact views/likes and shareable channel/video URLs. See [the graded final-cut review](docs/FINAL-CUT-REVIEW.md) and [release verification](docs/RELEASE-V6.md) and the [60-second recording script](docs/RECORDING-SCRIPT-60S.md).
+Flutter web + GenUI/A2UI v0.9 + Node/TypeScript, deployed together on Vercel. Through the Responses API, `gpt-6-astra` groups matching global topics across languages and screens YouTube candidates with explicit inclusion/exclusion reasons. Authored channel neighborhoods make related perspectives easy to explore; fresh evidence updates the persistent GenUI surface while preserving the current selection. Full-frame thumbnails, in-card playback, compact views/likes and shareable channel/video URLs keep media in focus. See [the completed recording review](docs/REVIEW-CUT-01.md), [current verification](docs/ENVIRONMENT-READINESS.md) and [the 60-second transcript](docs/RECORDING-SCRIPT-60S.md).
 
 ## Timed demo recording
 
@@ -12,12 +16,12 @@ Use the [recording presenter](https://memedia-pi.vercel.app/recording.html) to d
 
 ## Start here
 
-Requirements: Flutter 3.47.3 / Dart 3.13.3, Node 24.18.1, Chrome. Flutter is installed at `/Users/dartbot/dev/flutter` on the setup Mac. No full Xcode installation is needed for this web target.
+Requirements: Flutter 3.47.3 / Dart 3.13.3, Node 24.18.1, Chrome. Put your Flutter SDK's `bin` directory on PATH. No full Xcode installation is needed for this web target.
 
 From the repository root:
 
 ```sh
-export PATH="/Users/dartbot/dev/flutter/bin:$PATH"
+npm install
 npm run init:env
 npm test
 cd apps/flutter_app
@@ -33,7 +37,7 @@ Open [MeMedia locally](http://127.0.0.1:8787). The Node server serves the Flutte
 
 The galaxy starts with an embedded, dated snapshot, then reads the local cache. Opening a channel or world topic scans YouTube and screens metadata with Astra; accepted results update that channel while navigation stays available. Checks within two minutes reuse the cache. Publication age, cache observation time, and raw views/likes are separate.
 
-The local review remains at [localhost:8792](http://127.0.0.1:8792/). Earlier review reports document historical milestones; [the final-cut review](docs/FINAL-CUT-REVIEW.md) describes the latest playback behavior.
+Earlier review reports document historical milestones; [review cut 01](docs/REVIEW-CUT-01.md) describes the latest recording and playback behavior.
 
 ## Configure the actual API demo
 
@@ -91,7 +95,11 @@ Repository destination: [dart-technologies/memedia](https://github.com/dart-tech
 
 ## Documentation
 
-- [Current galaxy design and manual review](docs/GALAXY-V3.md)
+- [Submission writeup and judging scorecard](docs/SUBMISSION.md)
+- [Completed recording review](docs/REVIEW-CUT-01.md)
+- [Current environment and release verification](docs/ENVIRONMENT-READINESS.md)
+- [Constellation design](docs/STELLARSLATE-V5.md)
+- [Earlier galaxy design and manual review](docs/GALAXY-V3.md)
 - [Earlier explorer behavior](docs/EXPLORER-V2.md)
 - [Vercel preview handoff](docs/DEPLOYMENT-PREVIEW.md)
 - [Environment and keys](docs/ENVIRONMENT.md)

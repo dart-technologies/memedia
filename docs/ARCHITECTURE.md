@@ -1,5 +1,17 @@
 # Architecture
 
+## Current hosted explorer
+
+Flutter web and the Node/TypeScript API run in one Vercel deployment. The public explorer reads `/api/explorer` and refreshes allowlisted channels, current topics or the global sample through `/api/explorer/refresh`. The hosted adapter is [hosted.ts](../backend/src/hosted.ts); [explorer.ts](../backend/src/explorer.ts) owns discovery, Astra grouping/screening and cache updates.
+
+Global discovery pools 24 monitored Trends feeds and uses Astra to group event variants. Channel discovery retrieves YouTube metadata and asks Astra for schema-constrained topical-fit decisions. Deterministic creator/view/like rules order accepted matches. The showcase's channel neighborhoods and links are authored editorial structure. Model calls do not generate arbitrary Flutter widgets or verify full media content.
+
+Flutter maps accepted evidence into the same custom StellarSlate GenUI surface using A2UI v0.9 `/scene` updates. Navigation and player selection stay independent of pending refreshes. Local explorer state persists to disk; the hosted version uses ephemeral per-instance storage with a recorded seed fallback. Per-key request coalescing, cache windows and a per-instance scan budget bound demo work; they are not durable shared storage or a global rate limit.
+
+## Legacy local mission baseline
+
+The following mission-state architecture describes the earlier local endpoints retained in the repository. The deployed galaxy uses the explorer path above; public hosting does not expose the legacy mission action endpoints.
+
 ```mermaid
 flowchart LR
   UI[Flutter StellarSlate catalog component] -->|GenUI user action| HTTP[Local Node HTTP backend]
@@ -33,6 +45,6 @@ The checked setup versions are GenUI 0.10.2 / a2ui_core 0.1.1 / protocol v0.9. R
 
 ## Boundaries for later iterations
 
-The server binds to loopback and serves the web build from the same origin. It provides no public hosting, multi-user auth, arbitrary URL fetcher, uploads, external messages, or editing of provider data. Do not expose it publicly as-is.
+The legacy local server binds to loopback and serves the web build from the same origin. It provides no multi-user auth, arbitrary URL fetcher, uploads, external messages, or editing of provider data. Keep these legacy mission endpoints local; the separate hosted explorer adapter supplies the deployed API boundary.
 
 This baseline uses one structured ranking response per action. It does not yet carry a persistent Responses conversation or support asynchronous tools and mid-turn steering. Preserve the domain/provider boundary while adding those features. The earlier local Codex proof remains useful evidence, but it is a different transport and authentication route.
