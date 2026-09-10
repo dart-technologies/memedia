@@ -4,11 +4,11 @@
 
 [Open the live demo](https://memedia-pi.vercel.app/) in Chrome. iPhone Duo anchors the centered showcase, surrounded by globally pooled topics with one primary observation flag each. Twelve thumbnail-led channels cluster related perspectives, explain their connections and play YouTube inline.
 
-Flutter web + GenUI/A2UI v0.9 + Node/TypeScript, deployed together on Vercel. Server-side YouTube discovery and `gpt-6-astra` metadata screening refresh channels while preserving the current selection. Headlines wrap fully; media plays in the selected card, with compact views/likes and shareable channel/video URLs. See [the graded final-cut review](docs/FINAL-CUT-REVIEW.md) and [release verification](docs/RELEASE-V6.md) and the [60-second recording script](docs/RECORDING-SCRIPT-60S.md).
+Flutter web + GenUI/A2UI v0.9 + Node/TypeScript, deployed together on Vercel. Server-side YouTube discovery and `gpt-6-astra` metadata screening refresh channels while preserving the current selection. Source thumbnails preserve their full framing and YouTube requests playback with sound. Headlines wrap fully; media plays in the selected card, with compact views/likes and shareable channel/video URLs. See [the graded final-cut review](docs/FINAL-CUT-REVIEW.md) and [release verification](docs/RELEASE-V6.md) and the [60-second recording script](docs/RECORDING-SCRIPT-60S.md).
 
 ## Timed demo recording
 
-Use the [recording presenter](https://memedia-pi.vercel.app/recording.html) to drive the six timed walkthrough beats in a separate clean demo tab. Includes narration, warm-up, pause/resume, manual advance and optional local WebM capture. See [harness instructions](docs/RECORDING-HARNESS.md).
+Use the [recording presenter](https://memedia-pi.vercel.app/recording.html) to drive the six timed walkthrough beats in a separate clean demo tab. Includes an 81-word script, warm-up, pause/resume, manual advance and local WebM capture with tab audio. Compact annotations show a real Astra screening decision and explain the persistent GenUI surface. Optional ElevenLabs synthesis and local MP4 assembly are documented in the harness guide. See [harness instructions](docs/RECORDING-HARNESS.md).
 
 ## Start here
 
@@ -79,7 +79,7 @@ The local backend uses Node 24's built-in TypeScript stripping and standard `fet
 
 ## Validation and current limits
 
-Current checks: 21 backend/timer tests and 8 Flutter tests passed, clean analysis and TypeScript checking, and a successful release web build. Production health, explorer loading, live Astra/YouTube refresh, Chrome navigation and inline playback were verified. See [readiness](docs/ENVIRONMENT-READINESS.md) for current results and historical checks.
+Current checks: 23 backend/player/timer tests and 8 Flutter tests passed, clean analysis and TypeScript checking, and a successful release web build. Production health, explorer loading, live Astra/YouTube refresh, Chrome navigation and inline playback were verified. See [readiness](docs/ENVIRONMENT-READINESS.md) for current results and historical checks.
 
 Six TikTok preview images are linked using public oEmbed. Apple’s account and Club Duo playback were inspected through the signed-in browser; the other five remain search candidates. No browser session or cookies are used by the backend. Source badges identify platforms, not endorsement or verified factual accuracy.
 

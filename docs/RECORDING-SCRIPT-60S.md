@@ -1,34 +1,34 @@
-# MeMedia — 60-second recording script
+# MeMedia — concise recording script
 
-For automatic screen advancement, use [the recording harness](RECORDING-HARNESS.md).
+81 words across six ten-second beats. The 30-second beat leaves room for the source clip. The final showcase hold begins at 56 seconds. This replaces the earlier 132-word transcript.
 
-Target: 132 spoken words at a relaxed demo pace. Record in Chrome, landscape. Keep playback muted beneath narration. Warm First looks once before recording, return to Discover, and keep the publication slider on NOW. Live research may take longer than a segment; keep the cached media visible while scanning. Do not imply that a complete scan finished until its status confirms it.
-
-| Time | Screen action | Voiceover |
+| Time | Screen | Voiceover |
 |---|---|---|
-| 0–10s | Hold the centered discovery view; gesture toward the surrounding topics. | “This is MeMedia: unfolding moments, connecting reactions. iPhone Duo anchors our showcase, while other global conversations unfold around it.” |
-| 10–20s | Open the iPhone Duo center. Point to Reactions & memes. | “Open the moment and one story becomes twelve curated channels: first impressions, competitive responses, buying decisions, and the memes people share.” |
-| 20–30s | Open Why Reactions & memes; close it. | “Related perspectives sit together. Thumbnail stacks show actual media, and every Why explains the editorial connection. Source marks tell you where it came from.” |
-| 30–40s | Open First looks; show Mrwhosetheboss playing in its own card and the ranked rail. | “Choose a channel and watch here. Established creators lead; views and likes stay visible as observed counts, separate from freshness.” |
-| 40–50s | Point to scan status, then one media card’s Why. | “Opening a channel refreshes discovery. Astra screens new metadata for relevance, while the current selection stays available. Publication age and scan time remain distinct.” |
-| 50–60s | Close detail; show the timeline, then return to the showcase. | “A2UI updates the same surface as the story develops. Follow the reaction, explore another perspective, and keep the original source within reach. That’s MeMedia.” |
+| 0–10s | Discover | Every moment sparks a thousand reactions. MeMedia brings them into focus. |
+| 10–20s | Connected channels | One launch. First looks, competitive responses, and memes. Related perspectives sit together. |
+| 20–30s | Why these connect | Follow the connection from Samsung’s response to brand banter and visual memes. Each channel explains its editorial lens. |
+| 30–40s | Watch the moment | Choose a channel. Watch the story unfold. |
+| 40–50s | Astra behind the scenes | Behind the scenes, Astra screens new metadata for relevance. Here is an actual decision, with its reason. |
+| 50–60s | GenUI stays connected | Through A2UI, fresh evidence updates the same GenUI surface. Your place stays intact. MeMedia. Unfolding moments. |
 
 ## Continuous transcript
 
-This is MeMedia: unfolding moments, connecting reactions. iPhone Duo anchors our showcase, while other global conversations unfold around it.
+Every moment sparks a thousand reactions. MeMedia brings them into focus.
 
-Open the moment and one story becomes twelve curated channels: first impressions, competitive responses, buying decisions, and the memes people share.
+One launch. First looks, competitive responses, and memes. Related perspectives sit together.
 
-Related perspectives sit together. Thumbnail stacks show actual media, and every Why explains the editorial connection. Source marks tell you where it came from.
+Follow the connection from Samsung’s response to brand banter and visual memes. Each channel explains its editorial lens.
 
-Choose a channel and watch here. Established creators lead; views and likes stay visible as observed counts, separate from freshness.
+Choose a channel. Watch the story unfold.
 
-Opening a channel refreshes discovery. Astra screens new metadata for relevance, while the current selection stays available. Publication age and scan time remain distinct.
+Behind the scenes, Astra screens new metadata for relevance. Here is an actual decision, with its reason.
 
-A2UI updates the same surface as the story develops. Follow the reaction, explore another perspective, and keep the original source within reach. That’s MeMedia.
+Through A2UI, fresh evidence updates the same GenUI surface. Your place stays intact. MeMedia. Unfolding moments.
 
-See [the graded dry-run review](FINAL-CUT-REVIEW.md) for final-cut improvements.
+## Delivery
 
-## Recording notes
+The review candidate uses ElevenLabs’s stock Jessica voice, generated with `eleven_multilingual_v2`. It is synthetic narration, not a recording or imitation of the presenter. A2UI and GenUI are expanded phonetically for synthesis. Each beat starts 250 ms after the transition; segments longer than 9.4 seconds are modestly accelerated to fit.
 
-The single flag identifies the primary observation source; it is not topic nationality. The surrounding trends are ranked across monitored country feeds, not an exhaustive world census. Review pending and Astra metadata fit do not mean full video verification. The hosted demo cache is temporary per instance; a durable cross-instance editorial store is future work. Browser autoplay may require a tap.
+Mix narration clearly over the app. Leave source audio prominent from 33.5–39.5 seconds, then duck it under narration. Keep the full source thumbnails and live scan labels visible. The Astra annotation shows a real recorded metadata-screening decision, not a full factual verification. Editorial channel relationships are separately curated; do not claim Astra autonomously invented them. A2UI updates the persistent GenUI surface; Flutter owns layout and animation.
+
+Use [the recording harness](RECORDING-HARNESS.md). Playback requests sound; a fresh browser may require Play with sound. The capture requests tab audio, not the microphone. Review the narration before a final public upload.

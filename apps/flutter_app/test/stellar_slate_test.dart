@@ -222,12 +222,13 @@ void main() {
     demoCue(1, 'relationships');
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
-    expect(find.text('Continue'), findsOneWidget);
+    expect(find.byType(AlertDialog), findsNothing);
+    expect(find.byKey(const ValueKey('demo-annotation')), findsOneWidget);
     expect(find.text('Reactions & memes'), findsOneWidget);
     demoCue(2, 'freshness');
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
-    expect(find.text('Curation & freshness'), findsOneWidget);
+    expect(find.text('Astra · metadata screening'), findsOneWidget);
     expect(find.byType(ChannelPlayer), findsOneWidget);
     expect(
       find.ancestor(

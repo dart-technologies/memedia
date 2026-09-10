@@ -294,7 +294,6 @@ class _StellarSlateState extends State<StellarSlate>
   }
 
   int? demoSequence;
-  DialogRoute<void>? demoDialog;
   void handleDemoCue(Map scene) {
     final cue = scene['demoCue'];
     if (cue is! Map || cue['sequence'] == demoSequence) return;
@@ -303,9 +302,6 @@ class _StellarSlateState extends State<StellarSlate>
       if (!mounted || (scene['demoCue'] as Map)['sequence'] != demoSequence) {
         return;
       }
-      final navigator = Navigator.of(context);
-      if (demoDialog?.isActive == true) navigator.removeRoute(demoDialog!);
-      demoDialog = null;
       final action = cue['action'];
       setState(() {
         horizon = 1;
@@ -317,37 +313,6 @@ class _StellarSlateState extends State<StellarSlate>
         if (action == 'discovery') playingId = null;
       });
       if (rail.hasClients) rail.jumpTo(0);
-      Map? explanation;
-      if (action == 'relationships') {
-        explanation = (scene['clusterGroups'] as List).cast<Map>().firstWhere(
-          (g) => (g['label'] as String).toLowerCase().contains('reactions'),
-        );
-      }
-      if (action == 'relationships' || action == 'freshness') {
-        final channel = (scene['channels'] as List).cast<Map>().firstWhere(
-          (c) => c['id'] == 'hands-on',
-        );
-        demoDialog = DialogRoute<void>(
-          context: context,
-          builder: (context) => AlertDialog(
-            backgroundColor: panel,
-            title: Text(
-              explanation?['label'] as String? ?? 'Curation & freshness',
-            ),
-            content: Text(
-              explanation?['reason'] as String? ??
-                  '${channel['whyThisChannel']}\n\nOpening a channel scans YouTube and screens metadata with Astra. Fresh cache is reused. Views and likes are observed counts; publication age and scan time stay separate. Errors retain current media.',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Continue'),
-              ),
-            ],
-          ),
-        );
-        navigator.push(demoDialog!);
-      }
     });
   }
 
@@ -454,6 +419,7 @@ class _StellarSlateState extends State<StellarSlate>
         final reduced = MediaQuery.disableAnimationsOf(context);
         if (reduced && drift.isAnimating) drift.stop();
         if (!reduced && !drift.isAnimating) drift.repeat();
+        final annotation = demoAnnotation(scene);
         final header = Padding(
           padding: EdgeInsets.fromLTRB(
             compact ? 20 : 32,
@@ -557,7 +523,12 @@ class _StellarSlateState extends State<StellarSlate>
                       ],
                     ),
                   ),
-                  if (!compact)
+                  if (!compact && annotation != null)
+                    SizedBox(
+                      width: math.min(470.0, b.maxWidth * .43),
+                      child: annotation,
+                    ),
+                  if (!compact && annotation == null)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
@@ -579,6 +550,7 @@ class _StellarSlateState extends State<StellarSlate>
                     ),
                 ],
               ),
+              if (compact && annotation != null) annotation,
               if (compact) ...[
                 const SizedBox(height: 10),
                 scanLabel(scene, selectedKey ?? 'world', cache ?? world),
@@ -649,7 +621,11 @@ class _StellarSlateState extends State<StellarSlate>
                     header,
                     SizedBox(
                       height: inChannel
-                          ? (compact ? 250 : 190)
+                          ? (compact
+                                ? 250
+                                : scene['demoCue'] != null
+                                ? 155
+                                : 190)
                           : isDuo
                           ? (compact ? 970 : 480)
                           : (compact ? 510 : 500),
@@ -680,6 +656,62 @@ class _StellarSlateState extends State<StellarSlate>
           ],
         );
       },
+    );
+  }
+
+  Widget? demoAnnotation(Map scene) {
+    final action = (scene['demoCue'] as Map?)?['action'];
+    String? title;
+    String? body;
+    if (action == 'relationships') {
+      title = 'Reactions & memes';
+      body = 'Samsung responds → Brand banter → Long fingers\nConnected by an editorial lens, not a claim of causality.';
+    } else if (action == 'freshness') {
+      final cache = (scene['cacheEntries'] as Map?)?['hands-on'] as Map?;
+      final decisions = (cache?['decisions'] as List? ?? []).cast<Map>();
+      final decision =
+          decisions.where((d) => d['include'] == false).firstOrNull ??
+          decisions.firstOrNull;
+      final artifacts = (cache?['artifacts'] as List? ?? []).cast<Map>();
+      final artifact = artifacts
+          .where((a) => a['id'] == decision?['id'])
+          .firstOrNull;
+      final kept = decisions.where((d) => d['include'] == true).length;
+      title = 'Astra · metadata screening';
+      body = decision == null
+          ? 'Awaiting a recorded decision. Current media stays available.'
+          : '$kept/${decisions.length} kept · checked ${relativeTime(cache?['checkedAt'], now)}\n${decision['include'] == true ? 'Included' : 'Excluded'}: ${artifact?['title'] ?? decision['id']}\n${decision['why']}';
+    } else if (action == 'timeline') {
+      title = 'A2UI → GenUI → StellarSlate';
+      body = 'Fresh evidence. The same surface.\nChannels, playback and your place stay connected.';
+    }
+    if (title == null) return null;
+    return Container(
+      key: const ValueKey('demo-annotation'),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        color: panel,
+        border: Border(left: BorderSide(color: mint, width: 2)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              color: mint,
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            body!,
+            style: const TextStyle(color: ink, fontSize: 12, height: 1.4),
+          ),
+        ],
+      ),
     );
   }
 
@@ -751,14 +783,17 @@ class _StellarSlateState extends State<StellarSlate>
 
   Widget imageTile(Map? a, {double radius = 16}) => ClipRRect(
     borderRadius: BorderRadius.circular(radius),
-    child: a?['thumbnailUrl'] is String
-        ? Image.network(
-            a!['thumbnailUrl'] as String,
-            fit: BoxFit.cover,
-            webHtmlElementStrategy: WebHtmlElementStrategy.fallback,
-            errorBuilder: (_, e, s) => fallback(a),
-          )
-        : fallback(a),
+    child: ColoredBox(
+      color: const Color(0xff10121c),
+      child: a?['thumbnailUrl'] is String
+          ? Image.network(
+              a!['thumbnailUrl'] as String,
+              fit: BoxFit.contain,
+              webHtmlElementStrategy: WebHtmlElementStrategy.fallback,
+              errorBuilder: (_, e, s) => fallback(a),
+            )
+          : fallback(a),
+    ),
   );
   Widget fallback(Map? a) => Container(
     decoration: const BoxDecoration(
@@ -1199,12 +1234,12 @@ class _StellarSlateState extends State<StellarSlate>
         final nodeH = compact
             ? 178.0
             : drilling
-            ? 152.0
+            ? (scene['demoCue'] != null ? 135.0 : 152.0)
             : 170.0;
         final heroSize = compact
             ? 134.0
             : drilling
-            ? 142.0
+            ? (scene['demoCue'] != null ? 110.0 : 142.0)
             : 178.0;
         return Stack(
           clipBehavior: Clip.none,
@@ -1670,7 +1705,7 @@ class _StellarSlateState extends State<StellarSlate>
     }
     final scanning = (scene['scanStates'] as Map? ?? {})[key] == 'scanning';
     final cards = SizedBox(
-      height: 332 + titleHeight,
+      height: (scene['demoCue'] != null ? 300 : 332) + titleHeight,
       child: members.isEmpty
           ? Center(
               child: Column(
@@ -1708,7 +1743,8 @@ class _StellarSlateState extends State<StellarSlate>
                     if (i > 0) const SizedBox(width: 13),
                     SizedBox(
                       key: ValueKey(members[i]['id']),
-                      height: 332 + titleHeight,
+                      height:
+                          (scene['demoCue'] != null ? 300 : 332) + titleHeight,
                       child: mediaCard(
                         members[i],
                         i,
@@ -2402,7 +2438,7 @@ class _StellarSlateState extends State<StellarSlate>
       title: const Text('Connected moments. Clear evidence.'),
       content: const SingleChildScrollView(
         child: Text(
-          'The galaxy ranks one pool from 24 country feeds by the highest reported search-volume bucket, with no country quota. Flags indicate where a signal was observed, not creator nationality. This is not an exact worldwide total; coverage and feed availability limit the ranking. iPhone Duo is the curated showcase, not a claim to be the world’s #1 topic.\n\nChannel previews come from real media. Background stars and orbits are decorative. Channel neighborhoods are editorial groupings. Lines within a neighborhood use recorded related-channel IDs; they do not imply causality or factual agreement. Positions do not encode authority, engagement or time. Use the labeled timeline for time filtering. Mint dots indicate a cache check within 15 minutes; outlined dots mean older or unknown scan time, and amber indicates retained cache after an error.\n\nFreshness: publication age on each card. Scan status: when the cache was checked. Views and Likes: unmodified provider observations. Top signals keeps YouTube videos with 10K+ views or creators with 100K+ subscribers; All signals includes niche finds. Among topical matches, established creators lead, followed by views and likes. Subscriber size is not factual authority. Inline video starts muted; use Unmute for sound and Next to continue. Unknown stays unknown.\n\nAstra screens new YouTube metadata for topic fit. This is not full video verification. TikTok links were discovered through the signed-in browser; hosted TikTok crawling is not enabled.\n\nPublication history is reconstructed. Observed history filters recorded evidence. Current channel definitions are not historical editorial snapshots.',
+          'The galaxy ranks one pool from 24 country feeds by the highest reported search-volume bucket, with no country quota. Flags indicate where a signal was observed, not creator nationality. This is not an exact worldwide total; coverage and feed availability limit the ranking. iPhone Duo is the curated showcase, not a claim to be the world’s #1 topic.\n\nChannel previews come from real media. Background stars and orbits are decorative. Channel neighborhoods are editorial groupings. Lines within a neighborhood use recorded related-channel IDs; they do not imply causality or factual agreement. Positions do not encode authority, engagement or time. Use the labeled timeline for time filtering. Mint dots indicate a cache check within 15 minutes; outlined dots mean older or unknown scan time, and amber indicates retained cache after an error.\n\nFreshness: publication age on each card. Scan status: when the cache was checked. Views and Likes: unmodified provider observations. Top signals keeps YouTube videos with 10K+ views or creators with 100K+ subscribers; All signals includes niche finds. Among topical matches, established creators lead, followed by views and likes. Subscriber size is not factual authority. YouTube requests autoplay with sound; browser policy may require Play with sound. Mute remains available. Next continues the channel. Unknown stays unknown.\n\nAstra screens new YouTube metadata for topic fit. This is not full video verification. TikTok links were discovered through the signed-in browser; hosted TikTok crawling is not enabled.\n\nPublication history is reconstructed. Observed history filters recorded evidence. Current channel definitions are not historical editorial snapshots.',
           style: TextStyle(fontSize: 13, height: 1.6),
         ),
       ),

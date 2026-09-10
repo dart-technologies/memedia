@@ -2,7 +2,7 @@
 if(new URLSearchParams(location.search).get('demo')==='1'){
  let handler=null;
  const actions=new Set(['discovery','showcase','relationships','channel','freshness','timeline','closing','warm']);
- window.memediaRegisterDemo=fn=>{handler=fn;};
+ window.memediaRegisterDemo=fn=>{handler=fn;document.title='MeMedia · Clean recording stage';};
  window.memediaDemoStatus=value=>{if(window.opener)window.opener.postMessage({type:'memedia-demo-status',value},location.origin);};
  window.addEventListener('message',e=>{
   if(e.origin!==location.origin||e.source!==window.opener||!e.data||e.data.type!=='memedia-demo-command')return;

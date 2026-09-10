@@ -1,10 +1,40 @@
 export const beats = [
- {at:0, action:'discovery', label:'Discover', voice:'This is MeMedia: unfolding moments, connecting reactions. iPhone Duo anchors our showcase, while other global conversations unfold around it.'},
- {at:10, action:'showcase', label:'Open the moment', voice:'Open the moment and one story becomes twelve curated channels: first impressions, competitive responses, buying decisions, and the memes people share.'},
- {at:20, action:'relationships', label:'Explain the connections', voice:'Related perspectives sit together. Thumbnail stacks show actual media, and every Why explains the editorial connection. Source marks tell you where it came from.'},
- {at:30, action:'channel', label:'Watch First looks', voice:'Choose a channel and watch here. Established creators lead; views and likes stay visible as observed counts, separate from freshness.'},
- {at:40, action:'freshness', label:'Curation and freshness', voice:'Opening a channel refreshes discovery. Astra screens new metadata for relevance, while the current selection stays available. Publication age and scan time remain distinct.'},
- {at:50, action:'timeline', label:'Follow the reaction', voice:'A2UI updates the same surface as the story develops. Follow the reaction, explore another perspective, and keep the original source within reach. That’s MeMedia.'},
+  {
+    "at": 0,
+    "action": "discovery",
+    "label": "Discover",
+    "voice": "Every moment sparks a thousand reactions. MeMedia brings them into focus."
+  },
+  {
+    "at": 10,
+    "action": "showcase",
+    "label": "Connected channels",
+    "voice": "One launch. First looks, competitive responses, and memes. Related perspectives sit together."
+  },
+  {
+    "at": 20,
+    "action": "relationships",
+    "label": "Why these connect",
+    "voice": "Follow the connection from Samsung’s response to brand banter and visual memes. Each channel explains its editorial lens."
+  },
+  {
+    "at": 30,
+    "action": "channel",
+    "label": "Watch the moment",
+    "voice": "Choose a channel. Watch the story unfold."
+  },
+  {
+    "at": 40,
+    "action": "freshness",
+    "label": "Astra behind the scenes",
+    "voice": "Behind the scenes, Astra screens new metadata for relevance. Here is an actual decision, with its reason."
+  },
+  {
+    "at": 50,
+    "action": "timeline",
+    "label": "GenUI stays connected",
+    "voice": "Through A2UI, fresh evidence updates the same GenUI surface. Your place stays intact. MeMedia. Unfolding moments."
+  }
 ];
 export const cues = [...beats.map(({at,action})=>({at,action})),{at:56,action:'closing'}].sort((a,b)=>a.at-b.at);
 // The clock measures elapsed time; slow callbacks never accumulate timer drift.

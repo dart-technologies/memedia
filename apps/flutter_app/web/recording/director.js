@@ -5,7 +5,7 @@ const timeline=new DemoTimeline(action=>send(action));
 const beatIndex=()=>Math.min(5,Math.floor(timeline.position()/10));
 function send(action){if(!ready||!demo||demo.closed)return;const id=++commandId;awaiting.set(id,performance.now());demo.postMessage({type:'memedia-demo-command',action,id},location.origin);}
 function setReady(value){ready=value;for(const id of ['warm','capture','start','previous','next','reset'])$(id).disabled=!value;document.querySelectorAll('#beats button').forEach(b=>b.disabled=!value);$('capture').disabled=!value||!!countdown||!!(recorder&&recorder.state!=='inactive');$('pause').disabled=!value||!timeline.running;$('connection').textContent=value?'Demo connected · clean window ready.':'Demo window not connected. Open it to continue.';}
-function render(){const t=timeline.position(),i=beatIndex();$('clock').textContent=`00:${Math.floor(t).toString().padStart(2,'0')}`;if(t>=60)$('clock').textContent='01:00';$('progress').value=t;$('label').textContent=beats[i].label;$('voice').textContent=beats[i].voice;$('phase').textContent=t>=60?'Complete':`${timeline.running?'Running':t>0?'Paused':'Ready'} · beat ${i+1} of 6`;$('nextCue').textContent=i<5?`Next at ${beats[i+1].at}s · ${beats[i+1].label}`:t<56?'At 56s · return to the showcase':'Finish on the showcase';document.querySelectorAll('#beats li').forEach((li,n)=>li.classList.toggle('active',n===i));$('pause').disabled=!timeline.running;$('start').textContent=t>=60?'Run again':t>0?'Resume':'Start rehearsal';}
+function render(){const t=timeline.position(),i=beatIndex();$('clock').textContent=`00:${Math.floor(t).toString().padStart(2,'0')}`;if(t>=60)$('clock').textContent='01:00';$('progress').value=t;$('label').textContent=beats[i].label;$('voice').textContent=beats[i].voice;$('phase').textContent=t>=60?'Complete':`${timeline.running?'Running':t>0?'Paused':'Ready'} · beat ${i+1} of 6`;$('nextCue').textContent=i<5?`Next at ${beats[i+1].at}s · ${beats[i+1].label}`:t<56?'At 56s · return to the showcase':'Finish on the showcase';document.querySelectorAll('#beats li').forEach((li,n)=>li.classList.toggle('active',n===i));$('pause').disabled=!timeline.running;$('start').textContent=t>=60?'Run again':timeline.running?'Running':t>0?'Resume':'Start rehearsal';}
 function pause(){timeline.pause();if(recorder?.state==='recording')recorder.pause();render();}
 function start(){if(!ready)return;$('issue').textContent='';timeline.start();if(recorder?.state==='paused')recorder.resume();render();}
 function cancelCountdown(){if(countdown){clearInterval(countdown);countdown=null;}}
@@ -25,7 +25,7 @@ $('capture').onclick=async()=>{
  if(!navigator.mediaDevices?.getDisplayMedia||!window.MediaRecorder){$('issue').textContent='Tab recording is unavailable here. Use Chrome or your usual screen recorder with Start rehearsal.';return;}
  try{
   reset();$('issue').textContent='';
-  stream=await navigator.mediaDevices.getDisplayMedia({video:{frameRate:30},audio:false});
+  stream=await navigator.mediaDevices.getDisplayMedia({video:{frameRate:30},audio:true});
   if(!ready||!demo||demo.closed){stopCapture();throw Error('Demo disconnected');}
   const mime=['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm'].find(t=>MediaRecorder.isTypeSupported(t));
   recorder=new MediaRecorder(stream,mime?{mimeType:mime}:{});chunks=[];
@@ -34,7 +34,7 @@ $('capture').onclick=async()=>{
   recorder.onstop=()=>{if(downloadUrl)URL.revokeObjectURL(downloadUrl);downloadUrl=URL.createObjectURL(new Blob(activeChunks,{type:activeRecorder.mimeType}));$('download').href=downloadUrl;$('download').download=`memedia-${new Date().toISOString().replace(/[:.]/g,'-')}.webm`;$('download').hidden=false;};
   stream.getVideoTracks()[0].addEventListener('ended',()=>{pause();stopCapture();});
   let left=3;$('issue').textContent=`Recording starts in ${left}…`;$('stop').hidden=false;
-  countdown=setInterval(()=>{left--;if(left>0){$('issue').textContent=`Recording starts in ${left}…`;return;}cancelCountdown();if(!ready){stopCapture();return;}$('issue').textContent='Recording clean demo tab · no microphone audio';recorder.start(1000);timeline.reset();start();},1000);
+  countdown=setInterval(()=>{left--;if(left>0){$('issue').textContent=`Recording starts in ${left}…`;return;}cancelCountdown();if(!ready){stopCapture();return;}$('issue').textContent=stream.getAudioTracks().length?'Recording demo tab + tab audio · no microphone':'Recording video only · tab audio was not shared';recorder.start(1000);timeline.reset();start();},1000);
  }catch{stopCapture();$('issue').textContent='Capture was cancelled or unavailable. Rehearsal controls are still ready.';}
 };
 document.addEventListener('keydown',e=>{if(e.target instanceof HTMLInputElement||e.target instanceof HTMLTextAreaElement)return;if(!ready)return;if(e.code==='Space'){e.preventDefault();timeline.running?pause():start();}else if(e.code==='ArrowRight'){e.preventDefault();jump(beatIndex()+1);}else if(e.code==='ArrowLeft'){e.preventDefault();jump(beatIndex()-1);}else if(e.code==='KeyR'){e.preventDefault();reset();}});

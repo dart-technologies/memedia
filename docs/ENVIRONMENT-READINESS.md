@@ -1,5 +1,13 @@
 # MeMedia — environment readiness
 
+## Audible playback and recording candidate
+
+YouTube requests unmuted autoplay and preserves an explicit session mute preference; browser policy gets a Play with sound fallback. Source previews contain the full image rather than cropping to fill. Recording annotations are compact and show an actual Astra metadata decision plus the A2UI/GenUI relationship. Eight Flutter tests and 23 backend/player/timer tests pass; analysis and TypeScript checking are clean. Final Flutter build: 41.8 seconds. Chrome verified sound-enabled playback, full thumbnails and the live decision annotation. Two actual 60-second tab/audio captures completed; the second uses the tightened recording layout. The review MP4 combines the second capture with the ElevenLabs narration.
+
+The local ElevenLabs key was authenticated (voices HTTP 200) and six narration segments synthesized with stock Jessica / eleven_multilingual_v2. It remains private and local, separate from the three hosted production credentials.
+
+Production release `dpl_HuzJnhQHpczViaEW9AVADgP1rUWZ` is READY. The public health endpoint returned 200, and the hosted presenter, player JavaScript and compiled Flutter bundle match the checked local build. Source/deployment audit: 168 files, zero matches against all four configured private keys. Only the existing three demo API keys are hosted; ElevenLabs remains local. See [the completed review cut](REVIEW-CUT-01.md) for recording evidence and remaining review notes.
+
 ## Playback and final-cut review
 
 Headlines wrap fully; selected cards own playback; views/likes use compact notation with exact observations in detail. Channel/video URLs support reload and browser navigation. Eight Flutter tests and 21 backend/timer tests passed, analysis and TypeScript checking are clean, and the final release web build passed in 38.5 seconds. Chrome completed a 60-second director rehearsal and separate playback/deep-link checks. See [FINAL-CUT-REVIEW.md](FINAL-CUT-REVIEW.md) for source findings, grades, remaining limits and final-cut recommendations. This section supersedes earlier test counts and truncation behavior.
