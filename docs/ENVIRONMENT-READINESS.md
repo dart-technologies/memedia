@@ -1,5 +1,11 @@
 # MeMedia — environment readiness
 
+## Playback and final-cut review
+
+Headlines wrap fully; selected cards own playback; views/likes use compact notation with exact observations in detail. Channel/video URLs support reload and browser navigation. Eight Flutter tests and 21 backend/timer tests passed, analysis and TypeScript checking are clean, and the final release web build passed in 38.5 seconds. Chrome completed a 60-second director rehearsal and separate playback/deep-link checks. See [FINAL-CUT-REVIEW.md](FINAL-CUT-REVIEW.md) for source findings, grades, remaining limits and final-cut recommendations. This section supersedes earlier test counts and truncation behavior.
+
+Production playback release: `dpl_4ynV3DTQrwS7WZWC3wgQTr61AGaF` (READY). Public route/API/assets passed, and Chrome verified direct playback and Next updating the URL. Source plus release audit: 164 files, zero private-key matches.
+
 ## Recording harness update
 
 The presenter at `/recording.html` controls a clean `?demo=1` window, advancing the six ten-second script beats with a final showcase return at 56 seconds. Includes warm-up, pause/resume, manual jumps, restart and optional local WebM capture. 21 backend/timer tests and six Flutter tests pass; analysis is clean and the final release web compile passed in 38.4 seconds. Chrome completed the full 60-second rehearsal, including explanation routes, live cache warm-up and inline playback. Native tab-capture permission/download remains user-driven. See [RECORDING-HARNESS.md](RECORDING-HARNESS.md).

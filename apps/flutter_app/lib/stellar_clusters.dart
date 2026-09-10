@@ -70,8 +70,6 @@ class TopicCluster extends StatelessWidget {
                 Expanded(
                   child: Text(
                     label.toUpperCase(),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       color: color,
                       fontSize: 9,
@@ -100,7 +98,7 @@ class TopicCluster extends StatelessWidget {
               left: points[i].dx - width / 2,
               top: points[i].dy - 46,
               width: width,
-              height: 140,
+              height: 160,
               child: previews[i],
             ),
         ],
@@ -211,8 +209,6 @@ class _ChannelPreviewState extends State<ChannelPreview> {
           onTap: widget.onOpen,
           child: Text(
             widget.label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
             style: const TextStyle(
               fontSize: 12,
               color: _text,
@@ -227,8 +223,6 @@ class _ChannelPreviewState extends State<ChannelPreview> {
             onTap: widget.onExplain,
             child: Text(
               '${widget.status} · Why ↗',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
               style: const TextStyle(fontSize: 8, color: _quiet),
             ),
           ),

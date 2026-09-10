@@ -19,7 +19,7 @@ Controls stay in the presenter tab. Space toggles pause/resume, arrows change be
 | 0s | Centered Discover galaxy. |
 | 10s | Open iPhone Duo showcase. |
 | 20s | Show the recorded Reactions & memes relationship explanation. |
-| 30s | Close explanation and enter First looks; normal bounded live refresh/cache behavior runs. |
+| 30s | Close explanation and enter First looks with Mrwhosetheboss’s short playing in its ranked card; normal bounded live refresh/cache behavior runs. |
 | 40s | Show curation/freshness explanation while retaining the channel. |
 | 50s | Close explanation; restore publication timeline to NOW. |
 | 56s | Return to showcase for the closing line. |
@@ -33,8 +33,8 @@ The spoken copy follows [RECORDING-SCRIPT-60S.md](RECORDING-SCRIPT-60S.md). Thes
 
 Flutter applies cue changes through the existing persistent A2UI surface. The harness owns only its explanation routes, dismisses them on cue changes and leaves real cache/error labels intact. No credential configuration changes are required.
 
-Verification: 21 backend/timer tests; six Flutter tests including cue dialog replacement and persistent surface identity; Flutter analysis and release build; Chrome full 60-second rehearsal, live warm-up, timed explanation/channel transitions and completion. Native capture permission and the final recording download are user-driven and are not claimed as an executed recording in this check.
+Verification: 21 backend/timer tests; eight Flutter tests including cue dialog replacement and persistent surface identity; Flutter analysis and release build; Chrome full 60-second rehearsal, live warm-up, timed explanation/channel transitions and completion. Native capture permission and the final recording download are user-driven and are not claimed as an executed recording in this check.
 
 For deployment, rebuild Flutter then use the existing Vercel prebuilt production workflow in [RELEASE-V6.md](RELEASE-V6.md). Push source commits to `origin/main`; compiled Flutter assets and private environments remain ignored. Git push alone is not configured to build/deploy Flutter on Vercel.
 
-Production release: `dpl_G4qybQwqWyrtyfyMwZsektj3wYii`, READY. Immutable URL: https://memedia-b784so0i0-michow.vercel.app/recording.html .
+The latest playback and recording assessment is in [FINAL-CUT-REVIEW.md](FINAL-CUT-REVIEW.md). The channel cue selects an opening clip without reordering the rail. URLs preserve channel and playing-video identity; reload restarts that video. Exact available metrics remain in source details.

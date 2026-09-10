@@ -7,6 +7,8 @@ import 'package:genui/genui.dart';
 import 'package:memedia/stellar_slate.dart';
 import 'package:memedia/stellar_clusters.dart';
 import 'package:memedia/main.dart';
+import 'package:memedia/channel_player.dart';
+import 'package:memedia/explorer_route.dart';
 
 void main() {
   test('top signals gate niche videos and sort known curator reach before views and likes', () {
@@ -41,6 +43,46 @@ void main() {
       '🇬🇧',
     );
   });
+
+  test(
+    'compact metrics preserve unknown and zero and use readable magnitudes',
+    () {
+      expect(compactCount(null), '—');
+      expect(compactCount('0'), '0');
+      expect(compactCount('999'), '999');
+      expect(compactCount('1508'), '1.51K');
+      expect(compactCount('100000'), '100K');
+      expect(compactCount('7714520'), '7.71M');
+      expect(compactCount('999950'), '1M');
+    },
+  );
+  test(
+    'deep links preserve demo mode and clear old selections on discovery',
+    () {
+      final base = Uri.parse(
+        'https://example.org/?demo=1&channel=old&video=old',
+      );
+      final channel = explorerRoute(
+        base,
+        channel: 'hands-on',
+        video: 'yt-Od6M0AXpcxQ',
+      );
+      expect(channel.queryParameters, {
+        'demo': '1',
+        'channel': 'hands-on',
+        'video': 'yt-Od6M0AXpcxQ',
+      });
+      expect(explorerRoute(channel).queryParameters, {'demo': '1'});
+      expect(
+        explorerRoute(Uri.parse('https://example.org/?channel=old')).hasQuery,
+        false,
+      );
+      expect(explorerRoute(base, topic: 'iphone-duo').queryParameters, {
+        'demo': '1',
+        'topic': 'iphone-duo',
+      });
+    },
+  );
 
   test('raw counts keep zero distinct from unavailable', () {
     expect(rawCount(null), '—');
@@ -186,6 +228,14 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
     expect(find.text('Curation & freshness'), findsOneWidget);
+    expect(find.byType(ChannelPlayer), findsOneWidget);
+    expect(
+      find.ancestor(
+        of: find.byType(ChannelPlayer),
+        matching: find.byType(InkWell),
+      ),
+      findsNothing,
+    );
     expect(find.text('Reactions & memes'), findsNothing);
     demoCue(3, 'closing');
     await tester.pump();

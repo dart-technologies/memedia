@@ -5,6 +5,7 @@ import 'channel_player.dart';
 import 'stellar_clusters.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:genui/genui.dart';
 import 'package:json_schema_builder/json_schema_builder.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -32,6 +33,19 @@ String rawCount(Object? v) => v == null
         RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
         (m) => '${m[1]},',
       );
+String compactCount(Object? value) {
+  if (value == null) return '—';
+  final n = double.tryParse(value.toString().replaceAll(',', ''));
+  if (n == null || !n.isFinite) return value.toString();
+  for (final unit in [(1e9, 'B'), (1e6, 'M'), (1e3, 'K')]) {
+    if (n.abs() >= unit.$1 * .99995) {
+      final scaled = n / unit.$1;
+      return '${scaled.toStringAsFixed(scaled.abs() < 10 ? 2 : 1).replaceFirst(RegExp(r'\.?0+$'), '')}${unit.$2}';
+    }
+  }
+  return n.toStringAsFixed(0);
+}
+
 String runtime(Object? v) {
   final m = RegExp(r'^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$')
       .firstMatch(v?.toString() ?? '');
@@ -204,6 +218,12 @@ class _StellarSlateState extends State<StellarSlate>
   DateTime now = DateTime.now().toUtc();
   bool observed = false, english = true, savedOnly = false, topOnly = true;
   String? playingId;
+  String playbackState = 'loading';
+  int? navigationRevision;
+  String? routeVideo;
+  String? selectionIdentity;
+  bool revealPlaying = false;
+  bool resolveLinkedFilters = false;
   double horizon = 1;
   String platform = 'All';
   final rail = ScrollController();
@@ -293,7 +313,8 @@ class _StellarSlateState extends State<StellarSlate>
         platform = 'All';
         english = true;
         topOnly = true;
-        if (action == 'channel' || action == 'discovery') playingId = null;
+        if (action == 'channel') playingId = scene['playingVideoId'] as String?;
+        if (action == 'discovery') playingId = null;
       });
       if (rail.hasClients) rail.jumpTo(0);
       Map? explanation;
@@ -331,6 +352,22 @@ class _StellarSlateState extends State<StellarSlate>
   }
 
   Widget buildSky(Map scene) {
+    final selection =
+        '${scene['selectedTopicId']}/${scene['selectedChannelId']}';
+    if (selection != selectionIdentity ||
+        scene['navigationRevision'] != navigationRevision ||
+        scene['playingVideoId'] != routeVideo) {
+      if (scene['navigationRevision'] != navigationRevision &&
+          scene['playingVideoId'] != null) {
+        resolveLinkedFilters = true;
+      }
+      selectionIdentity = selection;
+      navigationRevision = scene['navigationRevision'] as int?;
+      routeVideo = scene['playingVideoId'] as String?;
+      if (playingId != routeVideo) playbackState = 'loading';
+      playingId = routeVideo;
+      revealPlaying = true;
+    }
     now = DateTime.now().toUtc();
     final channels = (scene['channels'] as List).cast<Map>();
     final world = scene['world'] as Map? ?? {'topics': []};
@@ -359,6 +396,18 @@ class _StellarSlateState extends State<StellarSlate>
             ),
           ]
         : <Map>[];
+    if (resolveLinkedFilters && playingId != null) {
+      final linked = members.where((a) => a['id'] == playingId).firstOrNull;
+      if (linked != null) {
+        if (!topSignal(linked)) topOnly = false;
+        if (!(linked['language'] as String? ?? '').startsWith('en')) {
+          english = false;
+        }
+        horizon = 1;
+        platform = 'All';
+        resolveLinkedFilters = false;
+      }
+    }
     final start = DateTime.utc(2026, 9, 9);
     final end = now.isAfter(start) ? now : start.add(const Duration(days: 1));
     final cutoff = start.add(
@@ -498,8 +547,6 @@ class _StellarSlateState extends State<StellarSlate>
                         const SizedBox(height: 8),
                         Text(
                           title as String,
-                          maxLines: compact ? 2 : 1,
-                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontSize: compact ? 28 : 35,
                             fontWeight: FontWeight.w400,
@@ -695,7 +742,7 @@ class _StellarSlateState extends State<StellarSlate>
               fontSize: 10,
               color: state == 'retained' ? gold : muted,
             ),
-            overflow: TextOverflow.ellipsis,
+            softWrap: true,
           ),
         ),
       ],
@@ -952,7 +999,7 @@ class _StellarSlateState extends State<StellarSlate>
         Offset(core.dx, h * .76),
         Offset(core.dx + satelliteSpread, h * .59),
       ];
-      final topicWidth = w >= 1000 ? 132.0 : 112.0;
+      final topicWidth = w >= 1000 ? 156.0 : 132.0;
       final topicPoints = [
         Offset(w * .10, h * .14),
         Offset(w * .31, h * .03),
@@ -1028,7 +1075,7 @@ class _StellarSlateState extends State<StellarSlate>
               left: points[i].dx - 53,
               top: points[i].dy - 30,
               width: 106,
-              height: 140,
+              height: 158,
               child: channelPreview(scene, nearby[i]),
             ),
           for (var i = 0; i < math.min(8, topics.length); i++)
@@ -1036,7 +1083,7 @@ class _StellarSlateState extends State<StellarSlate>
               left: topicPoints[i].dx - topicWidth / 2,
               top: topicPoints[i].dy,
               width: topicWidth,
-              height: 132,
+              height: 180,
               child: Tooltip(
                 message:
                     'Primary observation: ${topics[i]['primaryRegion'] ?? topics[i]['region'] ?? 'unknown'}. Not topic nationality.',
@@ -1150,10 +1197,10 @@ class _StellarSlateState extends State<StellarSlate>
             ? 127.0
             : 145.0;
         final nodeH = compact
-            ? 106.0
+            ? 178.0
             : drilling
-            ? 105.0
-            : 119.0;
+            ? 152.0
+            : 170.0;
         final heroSize = compact
             ? 134.0
             : drilling
@@ -1476,8 +1523,6 @@ class _StellarSlateState extends State<StellarSlate>
             const SizedBox(height: 5),
             Text(
               label,
-              maxLines: world && width >= 120 ? 2 : 1,
-              overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: width < 120 ? 11 : 12,
@@ -1495,9 +1540,7 @@ class _StellarSlateState extends State<StellarSlate>
                   ? 'CHECKED ${relativeTime(cache['checkedAt'], now).toUpperCase()}'
                   : isChannel
                   ? 'EXPLORE CHANNEL'
-                  : '${item['viewsDisplay'] ?? rawCount(item['views'])} views · ${item['likesDisplay'] ?? rawCount(item['likes'])} likes',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+                  : '${item['viewsDisplay'] ?? compactCount(item['views'])} views · ${item['likesDisplay'] ?? compactCount(item['likes'])} likes',
               style: TextStyle(
                 fontSize: world ? 12 : 7,
                 letterSpacing: isChannel ? 1.3 : 0,
@@ -1556,7 +1599,6 @@ class _StellarSlateState extends State<StellarSlate>
                       Expanded(
                         child: Text(
                           c['shortLabel'] as String? ?? c['label'] as String,
-                          maxLines: 2,
                           style: TextStyle(fontSize: compact ? 10 : 12),
                         ),
                       ),
@@ -1585,12 +1627,50 @@ class _StellarSlateState extends State<StellarSlate>
     final selectedName =
         channel?['shortLabel'] ?? channel?['label'] ?? topicLabel(topic!);
     final playlist = members.where(playable).toList();
+    playingId ??= playlist.firstOrNull?['id'] as String?;
     final chosen = playlist.where((a) => a['id'] == playingId).firstOrNull;
-    final start = chosen == null ? 0 : playlist.indexOf(chosen);
-    final queue = [...playlist.skip(start), ...playlist.take(start)];
+    final queue = playlist;
+    final normalWidth = compact ? 238.0 : 250.0;
+    final activeWidth = compact
+        ? math.min(350.0, MediaQuery.sizeOf(context).width - 32)
+        : 440.0;
+    double titleHeight = 0;
+    for (final a in members) {
+      final text = TextPainter(
+        text: TextSpan(
+          text: a['title'] as String,
+          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+        ),
+        textDirection: TextDirection.ltr,
+        textScaler: MediaQuery.textScalerOf(context),
+      )..layout(maxWidth: normalWidth);
+      titleHeight = math.max(titleHeight, text.height);
+    }
+    if (revealPlaying && chosen != null) {
+      revealPlaying = false;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted || !rail.hasClients) return;
+        final index = members.indexWhere((a) => a['id'] == playingId);
+        final left = index * (normalWidth + 13);
+        final right = left + activeWidth;
+        final viewport = rail.position.viewportDimension;
+        final offset = rail.offset;
+        final target = left < offset
+            ? left
+            : right > offset + viewport
+            ? right - viewport
+            : offset;
+        if ((target - offset).abs() < 1) return;
+        rail.animateTo(
+          target.clamp(0.0, rail.position.maxScrollExtent),
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeOut,
+        );
+      });
+    }
     final scanning = (scene['scanStates'] as Map? ?? {})[key] == 'scanning';
     final cards = SizedBox(
-      height: compact ? 252 : 230,
+      height: 332 + titleHeight,
       child: members.isEmpty
           ? Center(
               child: Column(
@@ -1618,13 +1698,33 @@ class _StellarSlateState extends State<StellarSlate>
                 ],
               ),
             )
-          : ListView.separated(
+          : SingleChildScrollView(
               controller: rail,
               scrollDirection: Axis.horizontal,
-              itemCount: members.length,
-              separatorBuilder: (_, i) => const SizedBox(width: 13),
-              itemBuilder: (context, i) =>
-                  mediaCard(members[i], i, cache, compact),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  for (var i = 0; i < members.length; i++) ...[
+                    if (i > 0) const SizedBox(width: 13),
+                    SizedBox(
+                      key: ValueKey(members[i]['id']),
+                      height: 332 + titleHeight,
+                      child: mediaCard(
+                        members[i],
+                        i,
+                        cache,
+                        compact,
+                        scene,
+                        queue,
+                        members[i]['id'] == chosen?['id'],
+                        members[i]['id'] == chosen?['id']
+                            ? activeWidth
+                            : normalWidth,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
             ),
     );
     return Container(
@@ -1645,10 +1745,23 @@ class _StellarSlateState extends State<StellarSlate>
               Expanded(
                 child: Text(
                   selectedName as String,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(fontSize: 13),
                 ),
+              ),
+              IconButton(
+                tooltip: 'Copy channel and video link',
+                onPressed: () async {
+                  final messenger = ScaffoldMessenger.of(context);
+                  await Clipboard.setData(
+                    ClipboardData(text: Uri.base.toString()),
+                  );
+                  if (mounted) {
+                    messenger.showSnackBar(
+                      const SnackBar(content: Text('Link copied')),
+                    );
+                  }
+                },
+                icon: const Icon(Icons.link, size: 17),
               ),
               IconButton(
                 tooltip: 'Refresh channel',
@@ -1706,8 +1819,6 @@ class _StellarSlateState extends State<StellarSlate>
                 Expanded(
                   child: Text(
                     channel['editorialQuestion'] as String,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(fontSize: 11, color: muted),
                   ),
                 ),
@@ -1767,42 +1878,36 @@ class _StellarSlateState extends State<StellarSlate>
               ],
             ),
           ),
-          if (queue.isNotEmpty)
-            compact
-                ? Column(
-                    children: [
-                      SizedBox(
-                        height: 320,
-                        child: ChannelPlayer(
-                          key: ValueKey(
-                            '$key:$topOnly:$platform:${horizon < 1 ? horizon : 'now'}:${playingId ?? 'auto'}',
-                          ),
-                          items: queue,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      cards,
-                    ],
-                  )
-                : Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        width: 400,
-                        height: 260,
-                        child: ChannelPlayer(
-                          key: ValueKey(
-                            '$key:$topOnly:$platform:${horizon < 1 ? horizon : 'now'}:${playingId ?? 'auto'}',
-                          ),
-                          items: queue,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(child: cards),
-                    ],
-                  )
-          else
-            cards,
+          if (chosen == null && playingId != null)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Text(
+                'Linked video is not available in this channel or the current filters.',
+                style: const TextStyle(color: gold, fontSize: 12),
+              ),
+            ),
+          if (queue.isEmpty && members.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 6),
+              child: Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  const Text(
+                    'No playable videos in the current selection. ',
+                    style: TextStyle(color: muted, fontSize: 12),
+                  ),
+                  if (topOnly)
+                    TextButton(
+                      onPressed: () => setState(() {
+                        topOnly = false;
+                        english = false;
+                      }),
+                      child: const Text('Include smaller creators'),
+                    ),
+                ],
+              ),
+            ),
+          cards,
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 7),
             child: Row(
@@ -1836,7 +1941,25 @@ class _StellarSlateState extends State<StellarSlate>
     );
   }
 
-  Widget mediaCard(Map a, int index, Map? cache, bool compact) {
+  void choosePlayback(Map scene, String id) {
+    setState(() {
+      playingId = id;
+      playbackState = 'loading';
+      revealPlaying = true;
+    });
+    act('play_media', scene, {'videoId': id});
+  }
+
+  Widget mediaCard(
+    Map a,
+    int index,
+    Map? cache,
+    bool compact,
+    Map scene,
+    List<Map> queue,
+    bool active,
+    double width,
+  ) {
     final raw = a['publishedAt'];
     final precise = a['publicationTimePrecision'] != 'day';
     final published = DateTime.tryParse(raw?.toString() ?? '');
@@ -1849,105 +1972,152 @@ class _StellarSlateState extends State<StellarSlate>
         ? relativeTime(raw, now).toUpperCase()
         : 'SEP ${published?.day} · DATE ONLY';
     return SizedBox(
-      width: compact ? 238 : 250,
-      child: InkWell(
-        onTap: () => playable(a)
-            ? setState(() => playingId = a['id'] as String)
-            : detail(a),
+      width: width,
+      child: MediaCardInteraction(
+        active: active,
+        onTap: () =>
+            playable(a) ? choosePlayback(scene, a['id'] as String) : detail(a),
         borderRadius: BorderRadius.circular(15),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
-                  border: Border.all(color: line),
+            SizedBox(
+              height: 27,
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  active
+                      ? (playbackState == 'playing'
+                            ? 'NOW PLAYING'
+                            : playbackState == 'paused'
+                            ? 'PAUSED'
+                            : playbackState == 'unavailable'
+                            ? 'PLAYBACK UNAVAILABLE'
+                            : 'LOADING VIDEO')
+                      : playable(a)
+                      ? 'PLAY HERE'
+                      : 'SOURCE PREVIEW',
+                  style: TextStyle(
+                    color: active ? mint : muted,
+                    fontSize: 9,
+                    letterSpacing: 1,
+                  ),
                 ),
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    imageTile(a, radius: 14),
-                    Container(
+              ),
+            ),
+            Expanded(
+              child: active
+                  ? Container(
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(14),
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.black.withValues(alpha: .1),
-                            Colors.transparent,
-                            Colors.black.withValues(alpha: .78),
-                          ],
+                        border: Border.all(color: mint, width: 2),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(13),
+                        child: ChannelPlayer(
+                          key: ValueKey(a['id']),
+                          items: queue,
+                          initialId: a['id'] as String,
+                          onChanged: (id, state) {
+                            if (!mounted) return;
+                            if (id != playingId) {
+                              choosePlayback(scene, id);
+                            } else if (state != playbackState) {
+                              setState(() => playbackState = state);
+                            }
+                            if (id == playingId &&
+                                scene['playingVideoId'] != id) {
+                              act('play_media', scene, {'videoId': id});
+                            }
+                          },
                         ),
                       ),
-                    ),
-                    Positioned(
-                      left: 9,
-                      top: 9,
-                      child: badge(age, fresh ? mint : ink),
-                    ),
-                    Positioned(
-                      right: 9,
-                      top: 9,
-                      child: Container(
-                        width: 22,
-                        height: 22,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.black.withValues(alpha: .65),
-                        ),
-                        child: Center(
-                          child: Text(
-                            newItem ? '•' : '${index + 1}',
-                            style: const TextStyle(fontSize: 9),
-                          ),
-                        ),
+                    )
+                  : Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        border: Border.all(color: line),
                       ),
-                    ),
-                    Positioned(
-                      left: 10,
-                      right: 10,
-                      bottom: 10,
-                      child: Row(
+                      child: Stack(
+                        fit: StackFit.expand,
                         children: [
-                          platformMark(a),
-                          const SizedBox(width: 6),
-                          Expanded(
-                            child: Text(
-                              a['publisher'] as String? ?? 'Source',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontSize: 10,
-                                color: Colors.white,
+                          imageTile(a, radius: 14),
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(14),
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  Colors.black.withValues(alpha: .1),
+                                  Colors.transparent,
+                                  Colors.black.withValues(alpha: .78),
+                                ],
                               ),
                             ),
                           ),
-                          if (a['platform'] == 'YouTube' ||
-                              a['platform'] == 'TikTok')
-                            const Icon(
-                              Icons.play_arrow_rounded,
-                              color: Colors.white,
-                              size: 22,
+                          Positioned(
+                            left: 9,
+                            top: 9,
+                            child: badge(age, fresh ? mint : ink),
+                          ),
+                          Positioned(
+                            right: 9,
+                            top: 9,
+                            child: Container(
+                              width: 22,
+                              height: 22,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.black.withValues(alpha: .65),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  newItem ? '•' : '${index + 1}',
+                                  style: const TextStyle(fontSize: 9),
+                                ),
+                              ),
                             ),
+                          ),
+                          Positioned(
+                            left: 10,
+                            right: 10,
+                            bottom: 10,
+                            child: Row(
+                              children: [
+                                platformMark(a),
+                                const SizedBox(width: 6),
+                                Expanded(
+                                  child: Text(
+                                    a['publisher'] as String? ?? 'Source',
+                                    style: const TextStyle(
+                                      fontSize: 10,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                                if (a['platform'] == 'YouTube' ||
+                                    a['platform'] == 'TikTok')
+                                  const Icon(
+                                    Icons.play_arrow_rounded,
+                                    color: Colors.white,
+                                    size: 22,
+                                  ),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ),
-                  ],
-                ),
-              ),
             ),
             const SizedBox(height: 8),
             Text(
               a['title'] as String,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
               style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
             ),
             const SizedBox(height: 5),
             Text(
-              '${a['viewsDisplay'] ?? rawCount(a['views'])} views  ·  ${a['likesDisplay'] ?? rawCount(a['likes'])} likes',
+              '${a['viewsDisplay'] ?? compactCount(a['views'])} views  ·  ${a['likesDisplay'] ?? compactCount(a['likes'])} likes',
               style: const TextStyle(fontSize: 10, color: ink),
             ),
             const SizedBox(height: 4),
@@ -1956,8 +2126,6 @@ class _StellarSlateState extends State<StellarSlate>
                 Expanded(
                   child: Text(
                     reviewLabel(a),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontSize: 8,
                       color: a['evidenceStatus'] == 'ORIGINAL_POST_INSPECTED'
@@ -2132,7 +2300,6 @@ class _StellarSlateState extends State<StellarSlate>
                   Expanded(
                     child: Text(
                       savedOnly ? 'Saved channels' : 'Choose your rabbit hole',
-                      maxLines: 2,
                       style: const TextStyle(fontSize: 22),
                     ),
                   ),
@@ -2421,4 +2588,22 @@ class OrbitPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant OrbitPainter old) =>
       old.phase != phase || old.centre != centre || old.points != points;
+}
+
+class MediaCardInteraction extends StatelessWidget {
+  const MediaCardInteraction({
+    super.key,
+    required this.active,
+    required this.onTap,
+    required this.borderRadius,
+    required this.child,
+  });
+  final bool active;
+  final VoidCallback onTap;
+  final BorderRadius borderRadius;
+  final Widget child;
+  @override
+  Widget build(BuildContext context) => active
+      ? child
+      : InkWell(onTap: onTap, borderRadius: borderRadius, child: child);
 }

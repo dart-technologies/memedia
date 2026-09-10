@@ -8,6 +8,8 @@ import 'package:http/http.dart' as http;
 
 import 'browser_prefs.dart';
 import 'demo_bridge.dart';
+import 'navigation_bridge.dart';
+import 'explorer_route.dart';
 import 'stellar_slate.dart';
 
 void main() => runApp(const MeMediaApp());
@@ -106,7 +108,9 @@ class _MeMediaAppState extends State<MeMediaApp> {
           ],
         },
       });
+      if (widget.initialScene == null) applyRoute(Uri.base, refreshNow: false);
       update();
+      registerRoute((url) => applyRoute(Uri.parse(url)));
       registerDemo(runDemoCue);
       if (widget.initialScene == null) unawaited(connect());
     } catch (_) {
@@ -132,9 +136,52 @@ class _MeMediaAppState extends State<MeMediaApp> {
         'world': j['world'],
       };
       update();
+      applyRoute(Uri.base);
       unawaited(refresh('world'));
     } catch (_) {
       /* The embedded snapshot remains available on a static host. */
+    }
+  }
+
+  void syncRoute({bool push = false}) => writeRoute(
+    explorerRoute(
+      Uri.base,
+      topic: scene['selectedTopicId'] as String?,
+      channel: scene['selectedChannelId'] as String?,
+      video: scene['playingVideoId'] as String?,
+    ).toString(),
+    push,
+  );
+
+  void applyRoute(Uri uri, {bool refreshNow = true}) {
+    if (!mounted || scene.isEmpty) return;
+    final channel = uri.queryParameters['channel'];
+    final validChannel = (scene['channels'] as List).any(
+      (c) => c['id'] == channel,
+    );
+    final topicId = uri.queryParameters['topic'];
+    final topics = ((scene['world'] as Map?)?['topics'] as List? ?? []);
+    final topic = topics
+        .cast<Map>()
+        .where((t) => t['id'] == topicId)
+        .firstOrNull;
+    scene = {
+      ...scene,
+      'selectedChannelId': validChannel ? channel : null,
+      'selectedTopicId': validChannel || topicId == 'iphone-duo'
+          ? 'iphone-duo'
+          : topic?['id'],
+      'playingVideoId': uri.queryParameters['video'],
+      'navigationRevision': (scene['navigationRevision'] as int? ?? 0) + 1,
+      'focusedTopic': topic,
+    };
+    if (refreshNow) {
+      update();
+      if (validChannel) {
+        unawaited(refresh(channel!));
+      } else if (topic != null) {
+        unawaited(refresh(topic['id'] as String));
+      }
     }
   }
 
@@ -146,13 +193,22 @@ class _MeMediaAppState extends State<MeMediaApp> {
       return;
     }
     const channelCues = {'channel', 'freshness', 'timeline'};
+    final demoChannel = (scene['channels'] as List).cast<Map>().firstWhere(
+      (c) => c['id'] == 'hands-on',
+    );
+    final demoVideo = channelMembers(scene, demoChannel)
+        .where((a) => a['id'] == 'yt-6AkGhTBtR4o' && playable(a))
+        .firstOrNull?['id'];
     scene = {
       ...scene,
       'selectedTopicId': action == 'discovery' ? null : 'iphone-duo',
       'selectedChannelId': channelCues.contains(action) ? 'hands-on' : null,
       'demoCue': {'sequence': ++demoSequence, 'action': action},
+      if (action == 'channel') 'playingVideoId': demoVideo,
+      if (!channelCues.contains(action)) 'playingVideoId': null,
     };
     update();
+    syncRoute();
     if (action == 'channel') unawaited(refresh('hands-on'));
   }
 
@@ -227,6 +283,29 @@ class _MeMediaAppState extends State<MeMediaApp> {
       final name = action['name'];
       final ids = (scene['channels'] as List).map((c) => c['id']).toSet();
       String? scan;
+      if (name == 'play_media') {
+        final c = (scene['channels'] as List)
+            .cast<Map>()
+            .where((c) => c['id'] == scene['selectedChannelId'])
+            .firstOrNull;
+        final items = c != null
+            ? channelMembers(scene, c)
+            : [
+                ...((scene['focusedTopic'] as Map?)?['articles'] as List? ??
+                    []),
+                ...(((scene['cacheEntries'] as Map)[scene['selectedTopicId']]
+                            as Map?)?['artifacts']
+                        as List? ??
+                    []),
+              ];
+        if (!items.any((a) => a['id'] == data['videoId'] && playable(a))) {
+          return;
+        }
+        scene = {...scene, 'playingVideoId': data['videoId']};
+        update();
+        syncRoute();
+        return;
+      }
       if (name == 'galaxy') {
         scene = {...scene, 'selectedTopicId': null, 'selectedChannelId': null};
       } else if (name == 'open_showcase') {
@@ -273,6 +352,19 @@ class _MeMediaAppState extends State<MeMediaApp> {
         };
       } else {
         return;
+      }
+      if ({
+        'galaxy',
+        'open_showcase',
+        'select_channel',
+        'open_topic',
+      }.contains(name)) {
+        scene = {
+          ...scene,
+          'playingVideoId': null,
+          'navigationRevision': (scene['navigationRevision'] as int? ?? 0) + 1,
+        };
+        syncRoute(push: true);
       }
       savePreferences(
         jsonEncode({

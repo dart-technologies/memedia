@@ -4,7 +4,7 @@
 
 [Open the live demo](https://memedia-pi.vercel.app/) in Chrome. iPhone Duo anchors the centered showcase, surrounded by globally pooled topics with one primary observation flag each. Twelve thumbnail-led channels cluster related perspectives, explain their connections and play YouTube inline.
 
-Flutter web + GenUI/A2UI v0.9 + Node/TypeScript, deployed together on Vercel. Server-side YouTube discovery and `gpt-6-astra` metadata screening refresh channels while preserving the current selection. See [release verification](docs/RELEASE-V6.md) and the [60-second recording script](docs/RECORDING-SCRIPT-60S.md).
+Flutter web + GenUI/A2UI v0.9 + Node/TypeScript, deployed together on Vercel. Server-side YouTube discovery and `gpt-6-astra` metadata screening refresh channels while preserving the current selection. Headlines wrap fully; media plays in the selected card, with compact views/likes and shareable channel/video URLs. See [the graded final-cut review](docs/FINAL-CUT-REVIEW.md) and [release verification](docs/RELEASE-V6.md) and the [60-second recording script](docs/RECORDING-SCRIPT-60S.md).
 
 ## Timed demo recording
 
@@ -33,7 +33,7 @@ Open [MeMedia locally](http://127.0.0.1:8787). The Node server serves the Flutte
 
 The galaxy starts with an embedded, dated snapshot, then reads the local cache. Opening a channel or world topic scans YouTube and screens metadata with Astra; accepted results update that channel while navigation stays available. Checks within two minutes reuse the cache. Publication age, cache observation time, and raw views/likes are separate.
 
-The local review remains at [localhost:8792](http://127.0.0.1:8792/). Earlier review reports document historical milestones; [Release v6](docs/RELEASE-V6.md) is the current deployment record.
+The local review remains at [localhost:8792](http://127.0.0.1:8792/). Earlier review reports document historical milestones; [the final-cut review](docs/FINAL-CUT-REVIEW.md) describes the latest playback behavior.
 
 ## Configure the actual API demo
 
@@ -79,7 +79,7 @@ The local backend uses Node 24's built-in TypeScript stripping and standard `fet
 
 ## Validation and current limits
 
-Current release: 19 backend tests and 6 Flutter tests passed, clean analysis and TypeScript checking, and a successful release web build. Production health, explorer loading, live Astra/YouTube refresh, Chrome navigation and inline playback were verified. See [readiness](docs/ENVIRONMENT-READINESS.md) for current results and historical checks.
+Current checks: 21 backend/timer tests and 8 Flutter tests passed, clean analysis and TypeScript checking, and a successful release web build. Production health, explorer loading, live Astra/YouTube refresh, Chrome navigation and inline playback were verified. See [readiness](docs/ENVIRONMENT-READINESS.md) for current results and historical checks.
 
 Six TikTok preview images are linked using public oEmbed. Apple’s account and Club Duo playback were inspected through the signed-in browser; the other five remain search candidates. No browser session or cookies are used by the backend. Source badges identify platforms, not endorsement or verified factual accuracy.
 
